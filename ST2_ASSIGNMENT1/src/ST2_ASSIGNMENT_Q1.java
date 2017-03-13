@@ -92,23 +92,74 @@ public class ST2_ASSIGNMENT_Q1 {
 			System.out.println("Output: " + (Arrays.toString(array)) + "\n");
 		}
 	}
-	public static void quickSort(int[] array){
-		System.out.println("quickSort BEGIN");
-		
-		if (printOutput == true){
-			System.out.println("Output: " + (Arrays.toString(array)) + "\n");
-		}
+	private static void quickSort (int[] array, int fromIndex, int toIndex) {
+	    int i = fromIndex;
+	    int j = toIndex;
+	    int pivot = array[fromIndex + (toIndex - fromIndex) / 2];
+	    while (i <= j) {
+	        while (array[i] < pivot) { i++; }
+	        while (array[j] > pivot) { j--; }
+	        if (i <= j) {
+	            int temp = array[i];
+	            array[i] = array[j];
+	            array[j] = temp;
+	            i++;
+	            j--;
+	        }
+	    }
+	    if (fromIndex < j)
+	    quickSort(array, fromIndex, j);
+	    if (i < toIndex)
+	    quickSort(array, i, toIndex);
 	}
-	public static void mergeSort(int[] array){
-		System.out.println("mergeSort BEGIN");
-		
-		if (printOutput == true){
-			System.out.println("Output: " + (Arrays.toString(array)) + "\n");
-		}
+	public static void mergeSort(int[] array, int fromIndex, int toIndex){
+		if (fromIndex < toIndex) {
+            int middleIndex = fromIndex + (toIndex - fromIndex) / 2;
+            // Sort the left side of the array
+            mergeSort(array, fromIndex, middleIndex);
+            // Sort the right side of the array
+            mergeSort(array, middleIndex + 1, toIndex);
+            // Merge both sides
+            mergeSides(array, fromIndex, middleIndex, toIndex);
+        }
 	}
+	private static void mergeSides (int[] array, int fromIndex, int middleIndex, int toIndex) {
+        int[] tmp = new int[array.length];
+        for (int i = fromIndex; i <= toIndex; i++) {
+            tmp[i] = array[i];
+        }
+        int i = fromIndex;
+        int j = middleIndex + 1;
+        int k = fromIndex;
+        while (i <= middleIndex && j <= toIndex) {
+            if (tmp[i] <= tmp[j]) {
+                array[k] = tmp[i];
+                i++;
+            } else {
+                array[k] = tmp[j];
+                j++;
+            }
+            k++;
+        }
+        while (i <= middleIndex) {
+            array[k] = tmp[i];
+            k++;
+            i++;
+        }
+    }
 	public static void countingSort(int[] array){
 		System.out.println("countingSort BEGIN");
-		
+		int[] countingArray = new int[array.length];
+		int[] sortedArray = new int[array.length];
+		for(int arrayIndex = 0; arrayIndex < (array.length); arrayIndex++){
+			countingArray[array[arrayIndex]-1]++; //increments counting array index for what the incoming array value is
+		}
+		for(int pass = 0; pass < (array.length); pass++){
+			if (countingArray[pass] != 0){
+				sortedArray[pass] = pass+1;
+			}
+		}
+		copyArray(sortedArray, array);
 		if (printOutput == true){
 			System.out.println("Output: " + (Arrays.toString(array)) + "\n");
 		}
@@ -146,6 +197,20 @@ public class ST2_ASSIGNMENT_Q1 {
 			newArray[i] = masterArray[i];
 		}
 	}
+	public static void quickSortAssist(int[] array, int fromIndex, int toIndex){ //debugging logs were causing issues, so I had to make a assistant method
+		System.out.println("quickSort BEGIN");
+		quickSort(array, fromIndex, toIndex);
+		if (printOutput == true){
+			System.out.println("Output: " + (Arrays.toString(array_holder)) + "\n");
+		}
+	}
+	public static void mergeSortAssist(int[] array, int fromIndex, int toIndex){
+		System.out.println("mergeSort BEGIN");
+		mergeSort(array, fromIndex, toIndex);
+		if (printOutput == true){
+			System.out.println("Output: " + (Arrays.toString(array)) + "\n");
+		}
+	}
 	
 	//SORTING CONTROL
 	public static void sortRandomArray(){
@@ -161,10 +226,10 @@ public class ST2_ASSIGNMENT_Q1 {
 		bubbleSort(array_holder);
 		
 		copyArray(array_random, array_holder);
-		quickSort(array_holder);
+		quickSortAssist(array_holder, 0, (array_dimensions-1));
 		
 		copyArray(array_random, array_holder);
-		mergeSort(array_holder);
+		quickSortAssist(array_holder, 0, (array_dimensions-1));
 		
 		copyArray(array_random, array_holder);
 		countingSort(array_holder);
